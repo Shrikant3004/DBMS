@@ -1,10 +1,10 @@
 from pydantic import BaseModel,EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional,Any
 class POST(BaseModel):
     title:str
     content:str
-    description:str
+    description:Optional[str]
 
 
 
@@ -24,10 +24,12 @@ class User_Response(BaseModel):
         orm_mode = True    
 
 class POST_Response(POST):
-    created_at:datetime
-    user:User_Response
+    post_id:int
+    created_at:Any
+    username:str
     class Config:
         orm_mode = True
+
 
 
 class User(BaseModel):
@@ -37,8 +39,15 @@ class User(BaseModel):
     phone:str
     email:EmailStr
     name:str
+    public:Optional[bool] = True
 
-
+class User_update(BaseModel):
+    password : str
+    description:Optional[str]
+    phone:str
+    email:EmailStr
+    name:str
+    public:Optional[bool]
 
 class Userlogin(BaseModel):
     username:str

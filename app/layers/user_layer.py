@@ -11,14 +11,28 @@ def create_user(user:schema.User):
 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="username already exists")
     
-    cursor.execute(""" insert into test_user (username,password,description,phone,email,name) values (%s,%s,%s,%s,%s,%s) returning * """,(user.username,user.password,user.description,user.phone,user.email,user.name,))
+    cursor.execute(""" insert into test_user (username,password,description,phone,email,name,public) values (%s,%s,%s,%s,%s,%s,%s) returning * """,(user.username,user.password,user.description,user.phone,user.email,user.name,user.public,))
     new_user = cursor.fetchone()
 
     conn.commit()
     return {"username":new_user["username"],"created_at":((datetime.now())),"description":new_user["description"],"user_id":new_user["user_id"],"name":new_user["name"]}
 
 
+def change_user(user:schema.User_update,id):
+    if user.public is None:
+        cursor.execute(""" update test_user set password = %s,description = %s,phone = %s,email = %s,name = %s where user_id = %s""",(user.password,user.description,user.phone,user.email,user.name,id,))
+    else:
+        cursor.execute(""" update test_user set password = %s,description = %s,phone = %s,email = %s,name = %s,public = %s where user_id = %s""",(user.password,user.description,user.phone,user.email,user.name,user.public,id,))
+    conn.commit()
+    return {"detail":"user_updated"}
+
+
 def get_user(id:int):
+    cursor.execute(""" select count(*) as cnt from test_user where user_id =%s """,(id,))
+    existing_user = cursor.fetchone()
+    if existing_user["cnt"]==0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="user does not exists")
+    
     cursor.execute(""" select username,Name,user_id,case when description is null then name else description end as description from test_user where user_id = %s """,(id,))
     user = cursor.fetchone()
     return user
