@@ -6,6 +6,9 @@ class POST(BaseModel):
     content:str
     description:Optional[str]
 
+class login(BaseModel):
+    username:str
+    password:str
 
 
 class POST_Create(POST):
@@ -27,10 +30,12 @@ class POST_Response(POST):
     post_id:int
     created_at:Any
     username:str
+    user_id:int
     class Config:
         orm_mode = True
 
-
+class Comment(BaseModel):
+    comment:str
 
 class User(BaseModel):
     username:str
@@ -59,6 +64,8 @@ class Userlogin(BaseModel):
 class comment(BaseModel):
     comment:str
 
+class token_id(BaseModel):
+    token:str
 
 class token(BaseModel):
     access_token :str

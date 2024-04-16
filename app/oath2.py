@@ -6,13 +6,13 @@ from . import schema
 
 secret_key = "5as5d65adad65a4ds683awd9awd5a8wdd45ad5a34dawdad533ad4ef6dvdr6gd"
 Algorithm  = "HS256"
-Expiration_time = 30
+Expiration_time = 1440
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="login")  # for request to "/login"  tokenUrl = "login"
 
 def create_access_token(data : dict):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=30)
+    expire = datetime.utcnow() + timedelta(minutes=Expiration_time)
     to_encode.update({"exp":expire})
     token  = jwt.encode(to_encode,secret_key,algorithm=Algorithm)
 

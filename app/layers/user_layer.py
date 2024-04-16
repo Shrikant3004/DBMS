@@ -37,8 +37,8 @@ def get_user(id:int):
     user = cursor.fetchone()
     return user
 
-def get_users():
-    cursor.execute(""" select username,user_id,Name,case when description is null then name else description end as description from test_user """)
+def get_users(id:int):
+    cursor.execute(""" select username,user_id,Name,case when description is null then name else description end as description from test_user where user_id<>%s""",(id,))
     user = cursor.fetchall()
     return user
 
@@ -95,3 +95,13 @@ def reject_request(id1:int,id2:int):
     
     return{"detail":"request rejected"}
 
+
+def get_requests(id:int):
+    cursor.execute("""select user_send as user from test_req where user_recv = %s and status = False union all select user_recv as user from test_req where user_send = %s and status = False  """,(id,id,))
+    payload = cursor.fetchall()
+    return payload
+
+def get_friends(id:int):
+    cursor.execute("""select user_send as user from test_req where user_recv = %s and status = True union all select user_recv as user from test_req where user_send = %s and status = True """,(id,id,))
+    payload = cursor.fetchall()
+    return payload
